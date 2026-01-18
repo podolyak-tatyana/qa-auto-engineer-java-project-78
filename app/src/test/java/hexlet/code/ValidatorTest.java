@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ValidatorTest {
+    private static final int MIN_LENGTH_5 = 5;
+    private static final int MIN_LENGTH_3 = 3;
 
     @Test
     void testStringSchemaCreation() {
@@ -40,7 +42,7 @@ class ValidatorTest {
     @Test
     void testMinLengthWithoutRequired() {
         Validator v = new Validator();
-        StringSchema schema = v.string().minLength(5);
+        StringSchema schema = v.string().minLength(MIN_LENGTH_5);
 
         assertThat(schema.isValid(null)).isTrue();
         assertThat(schema.isValid("")).isTrue();
@@ -53,7 +55,7 @@ class ValidatorTest {
     @Test
     void testMinLengthWithRequired() {
         Validator v = new Validator();
-        StringSchema schema = v.string().required().minLength(3);
+        StringSchema schema = v.string().required().minLength(MIN_LENGTH_3);
 
         assertThat(schema.isValid(null)).isFalse();
         assertThat(schema.isValid("")).isFalse();
@@ -91,7 +93,7 @@ class ValidatorTest {
         Validator v = new Validator();
         StringSchema schema = v.string()
                 .required()
-                .minLength(5)
+                .minLength(MIN_LENGTH_5)
                 .contains("hex");
 
         assertThat(schema.isValid(null)).isFalse();
