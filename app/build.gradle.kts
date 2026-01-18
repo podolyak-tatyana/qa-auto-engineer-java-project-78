@@ -20,6 +20,7 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation("tools.jackson.core:jackson-databind:3.0.3")
     implementation("tools.jackson.dataformat:jackson-dataformat-yaml:3.0.3")
+    testImplementation("org.assertj:assertj-core:3.27.6")
 }
 
 tasks.test {
