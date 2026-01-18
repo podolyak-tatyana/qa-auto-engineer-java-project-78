@@ -12,6 +12,8 @@ class MapSchemaTest {
     private static final int SIZE_ZERO = 0;
     private static final int SIZE_ONE = 1;
     private static final int SIZE_TWO = 2;
+    private static final int MIN_LASTNAME_LENGTH = 2;
+
 
     @Test
     void testMapSchemaCreation() {
@@ -108,5 +110,83 @@ class MapSchemaTest {
 
         data.put("key2", "value2");
         assertThat(schema.isValid(data)).isFalse();
+    }
+
+    @Test
+    void testShapeValidationExample() {
+        Validator v = new Validator();
+        MapSchema schema = v.map();
+
+        Map<String, BaseSchema<?>> schemas = new HashMap<>();
+        schemas.put("firstName", v.string().required());
+        schemas.put("lastName", v.string().required().minLength(MIN_LASTNAME_LENGTH));
+
+        schema.shape(schemas);
+
+        Map<String, String> human1 = new HashMap<>();
+        human1.put("firstName", "John");
+        human1.put("lastName", "Smith");
+        assertThat(schema.isValid(human1)).isTrue();
+
+        Map<String, String> human2 = new HashMap<>();
+        human2.put("firstName", "John");
+        human2.put("lastName", null);
+        assertThat(schema.isValid(human2)).isFalse();
+
+        Map<String, String> human3 = new HashMap<>();
+        human3.put("firstName", "Anna");
+        human3.put("lastName", "B");
+        assertThat(schema.isValid(human3)).isFalse();
+    }
+
+    @Test
+    void testShapeDoesNotBreakNullWithoutRequired() {
+        Validator v = new Validator();
+        MapSchema schema = v.map();
+
+        Map<String, BaseSchema<?>> schemas = new HashMap<>();
+        schemas.put("firstName", v.string().required());
+
+        schema.shape(schemas);
+
+        // Пока required() не вызван — null валиден
+        assertThat(schema.isValid(null)).isTrue();
+    }
+
+    @Test
+    void testShapeWithRequiredMakesNullInvalid() {
+        Validator v = new Validator();
+        MapSchema schema = v.map();
+
+        Map<String, BaseSchema<?>> schemas = new HashMap<>();
+        schemas.put("firstName", v.string().required());
+
+        schema.shape(schemas).required();
+
+        // required() запрещает null
+        assertThat(schema.isValid(null)).isFalse();
+    }
+
+    @Test
+    void testShapeLastCallOverridesPrevious() {
+        Validator v = new Validator();
+        MapSchema schema = v.map();
+
+        Map<String, BaseSchema<?>> schemas1 = new HashMap<>();
+        schemas1.put("firstName", v.string().required());
+
+        Map<String, BaseSchema<?>> schemas2 = new HashMap<>();
+        schemas2.put("lastName", v.string().required().minLength(MIN_LASTNAME_LENGTH));
+
+        schema.shape(schemas1).shape(schemas2);
+
+        Map<String, String> human = new HashMap<>();
+        human.put("firstName", null);      // теперь это не важно, т.к. shape перетерся
+        human.put("lastName", "Li");       // длина 2 -> ок
+
+        assertThat(schema.isValid(human)).isTrue();
+
+        human.put("lastName", "B");        // длина 1 -> не ок
+        assertThat(schema.isValid(human)).isFalse();
     }
 }
