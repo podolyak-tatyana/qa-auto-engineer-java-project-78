@@ -149,7 +149,6 @@ class MapSchemaTest {
 
         schema.shape(schemas);
 
-        // Пока required() не вызван — null валиден
         assertThat(schema.isValid(null)).isTrue();
     }
 
@@ -181,12 +180,12 @@ class MapSchemaTest {
         schema.shape(schemas1).shape(schemas2);
 
         Map<String, String> human = new HashMap<>();
-        human.put("firstName", null);      // теперь это не важно, т.к. shape перетерся
-        human.put("lastName", "Li");       // длина 2 -> ок
+        human.put("firstName", null);
+        human.put("lastName", "Li");
 
         assertThat(schema.isValid(human)).isTrue();
 
-        human.put("lastName", "B");        // длина 1 -> не ок
+        human.put("lastName", "B");
         assertThat(schema.isValid(human)).isFalse();
     }
 }
