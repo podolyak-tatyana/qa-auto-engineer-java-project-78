@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ValidatorTest {
+class StringSchemaTest {
     private static final int MIN_LENGTH_5 = 5;
     private static final int MIN_LENGTH_3 = 3;
 

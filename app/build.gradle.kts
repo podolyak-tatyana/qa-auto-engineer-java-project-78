@@ -1,9 +1,8 @@
 plugins {
-    //id("com.github.ben-manes.versions") version "0.52.0"
-    id("application")
     id("org.sonarqube") version "7.0.1.6134"
     id("checkstyle")
     jacoco
+    id("java")
 }
 
 group = "hexlet.code"
@@ -38,10 +37,6 @@ tasks.jacocoTestReport {
         xml.required.set(true)
         html.required.set(true)
     }
-}
-
-application {
-    mainClass = "hexlet.code.App"
 }
 
 sonar {
